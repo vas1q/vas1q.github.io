@@ -1,0 +1,191 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script type="text/javascript" nonce="c6cbdcd74b494e7db1cbbb4b6a5" src="//local.adguard.org?ts=1583141370630&amp;type=content-script&amp;dmn=tele.click&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1"></script>
+<script type="text/javascript" nonce="c6cbdcd74b494e7db1cbbb4b6a5" src="//local.adguard.org?ts=1583141370630&amp;name=AdGuard%20Assistant%20Beta&amp;name=AdGuard%20Popup%20Blocker%20%28Beta%29&amp;name=AdGuard%20Extra%20Beta&amp;type=user-script"></script><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-127715558-2');
+  </script>
+
+  <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter50822505 = new Ya.Metrika2({ id:50822505, clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/tag.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks2"); </script> <noscript><div><img src="https://mc.yandex.ru/watch/50822505" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
+
+<style>
+    html, body {
+      height: 100%;
+    }
+    body {
+      background-image: url(/bg.png);
+    }
+    .hidden {
+      display: none!important;
+    }
+    .footer {
+      padding: 20px 0;
+    }
+    .btn {
+      font-size: 12px;
+      text-transform: uppercase;
+      border-radius: 0;
+    }
+    .form-control {
+      border-radius: 0;
+    }
+    #convert-btn, #link {
+      background-color: #32afed;
+      border-color: #32afed;
+      color: #fff;
+    }
+    #inputUrl {
+      margin-bottom: 20px;
+    }
+    #convert-form {
+      width: 100%;
+    }
+    .title {
+      color: #000;
+      font-weight: normal;
+      font-size: 20px;
+    }
+    .line {
+      position: fixed;
+      height: 60px;
+      background: #32afed;
+      color: #fff;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .line:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <title>Переадресация Telegram</title>
+</head>
+<body class="text-center d-flex flex-column">
+  <div class="container d-flex justify-content-center align-items-center flex-grow-1 flex-column">
+    <form id="convert-form" class="hidden justify-content-center">
+      <div class="row">
+        <div class="col">
+          <h1 class="title">Сервис переадресации Telegram</h2>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-5">
+          <input type="inputUrl" id="inputUrl" class="form-control" placeholder="t.me/.." required="" autofocus="">
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <button class="btn btn-lg btn-primary btn-block" onclick="handleUrl()" id="convert-btn" type='button'>Получить адрес</button>
+        </div>
+      </div>
+                </form>
+    <div id="open-link" class="flex-column d-flex col justify-content-center align-items-center hidden">
+      <div class="row justify-content-center w-100">
+        <div class="col-md-5">
+          <a id="link" class="btn btn-lg btn-primary btn-block">Открыть</a>
+        </div>
+      </div>
+                </div>
+  </div>
+
+  <footer class="footer d-none">
+    <div class="container">
+      <span class="text-muted">
+        Связь: <a href="tg://resolve?domain=teclick">@teclick</a>
+      </span>
+    </div>
+  </footer>
+  <script>
+    var pageUrl = '/vas1k',
+      isIndex = ['/'].indexOf( pageUrl ) !== -1,
+      blockId = isIndex ? 'convert-form' : 'open-link',
+      block = document.getElementById( blockId ),
+      haveLine = document.querySelector( '.line' ) !== null,
+      haveBanners = document.querySelector( '.banner' ) !== null,
+      timeout = haveBanners || haveLine ? 5000 : 100,
+      inputUrl = document.getElementById('inputUrl');
+
+    block.classList.remove( 'hidden' );
+
+    if (!isIndex) {
+      forward();
+    }
+    document.getElementById('convert-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+    });
+    inputUrl.addEventListener('keyup', function(e) {
+      if ( e.keyCode !== 13 ) {
+        return;
+      }
+      e.preventDefault();
+      handleUrl();
+    });
+
+    function handleUrl(){
+      function setValue(val) {
+          inputUrl.value = val;
+      }
+      var value = inputUrl.value;
+      if (value.match(/^[a-zA-Z\?=\d_-]+$/)) {
+        return setValue( "https://" + window.location.host + "/" + value );
+      }
+      value = value
+        .replace(/.*t\.me/,"https://"+window.location.host)
+        .replace("http://","https://")
+        .replace("@","https://"+window.location.host+"/");
+
+      setValue(value);
+    }
+    function getLocation(url) {
+      var link = document.createElement( 'a' );
+      link.href = url;
+      return link;
+    }
+    function forward() {
+      var location = getLocation(pageUrl),
+        info = location.pathname.split("/"),
+        str = '';
+      switch (info[1]) {
+        case "socks":
+          str = "tg://socks" + location.search;
+          break;
+        case "joinchat":
+          str = "tg://join?invite=" + info[2];
+          break;
+        case "addstickers":
+          str = "tg://addstickers?set=" + info[2];
+          break;
+        case "proxy":
+          str = "tg://" + info[1] + location.search;
+          break;
+        default:
+          var domain = info[1];
+          str = "tg://resolve?domain=" + domain + location.search.replace("?start=", "&start=");
+          if (info[2]) {
+            str += "&post=" + info[2]
+          }
+      }
+
+      document.getElementById("link").href = str;
+      setTimeout(function() {
+          window.location.replace(str);
+      }, timeout );
+    }
+  </script>
+</body>
+</html>
